@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.glyphfont.Glyph?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.margallo.controllers.NewEmployee" styleClass="window-border, info">
+    <top>
+        <HBox alignment="CENTER_LEFT" styleClass="header">
+            <padding>
+                <Insets top="10" left="15" bottom="10" right="10"/>
+            </padding>
+            <Label styleClass="title">Insert New Employee</Label>
+        </HBox>
+    </top>
+    <center>
+        <GridPane alignment="CENTER" vgap="10" hgap="10">
+            <padding>
+                <Insets top="10" left="15" bottom="10" right="10"/>
+            </padding>
+            <Label maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label">Employee ID</Label>
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="txtEmployeeId"/>
+            <Label maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label">First Name</Label>
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" fx:id="txtFirstName"/>
+            <Label maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="form-label">Last Name</Label>
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" fx:id="txtLastName"/>
+            <Label maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="form-label">Position</Label>
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="4" fx:id="txtPosition"/>
+        </GridPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="footer">
+            <padding>
+                <Insets top="10" left="15" bottom="10" right="10"/>
+            </padding>
+            <Button fx:id="btnSubmit" onAction="#onBtnSubmitClick">
+                <graphic>
+                    <Glyph fontFamily="FontAwesome" icon="CHECK" fontSize="20"/>
+                </graphic>
+                Submit
+            </Button>
+            <Button fx:id="btnCancel" onAction="#onBtnCancelClick" styleClass="danger">
+                <graphic>
+                    <Glyph fontFamily="FontAwesome" icon="BAN" fontSize="20"/>
+                </graphic>
+                Cancel
+            </Button>
+        </HBox>
+    </bottom>
+</BorderPane>
