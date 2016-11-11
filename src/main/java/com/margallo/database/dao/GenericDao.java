@@ -10,16 +10,14 @@ public interface GenericDao<T> {
 
     public List<T> all() throws SQLException;
 
-    public List<T> all(String... filters);
+    public void insert(T model) throws SQLException;
 
-    public String insert(T model);
+    public T show(long id) throws SQLException;
 
-    public T show(Long id);
+    public void update(T model) throws SQLException;
 
-    public String update(T model);
+    public void delete(long id) throws SQLException;
 
-    public String delete(Long id);
-
-    public String exists(Long id);
+    public boolean exists(long id) throws SQLException;
 
 }

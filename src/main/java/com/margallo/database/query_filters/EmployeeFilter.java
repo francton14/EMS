@@ -1,4 +1,4 @@
-package com.margallo.services;
+package com.margallo.database.query_filters;
 
 /**
  * Created by franc on 11/9/2016.

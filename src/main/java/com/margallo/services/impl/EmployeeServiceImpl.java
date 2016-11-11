@@ -1,7 +1,7 @@
 package com.margallo.services.impl;
 
 import com.margallo.database.models.Employee;
-import com.margallo.services.EmployeeFilter;
+import com.margallo.database.query_filters.EmployeeFilter;
 import com.margallo.services.EmployeeService;
 
 import java.util.List;

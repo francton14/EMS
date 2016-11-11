@@ -28,11 +28,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        try {
-            TableDefinition.createTable(new CreateTableQuery(EmployeeTable.getTable(), true).addConstraints(new DbConstraint(EmployeeTable.getEmployeeId(), "employee_pk", Constraint.Type.PRIMARY_KEY)).addCustomization(MysObjects.IF_NOT_EXISTS_TABLE).validate().toString());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        
         launch(args);
     }
 
