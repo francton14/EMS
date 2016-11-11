@@ -1,6 +1,5 @@
 package com.margallo.database;
 
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -19,7 +18,7 @@ public class DatabaseConnection {
         try {
             Class.forName("org.postgresql.Driver");
             Properties properties = new Properties();
-            properties.load(new FileInputStream("config.properties"));
+            properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties"));
             connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/ems", properties.getProperty("database.username"), properties.getProperty("database.password"));
             statement = connection.createStatement();
         } catch (Exception e) {

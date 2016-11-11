@@ -97,7 +97,6 @@ public class Home {
 
     private void updateEmployeeList() {
         List<Employee> employees = employeeService.all();
-        employeeList = FXCollections.observableList(employees);
     }
 
 }
