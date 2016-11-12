@@ -1,6 +1,6 @@
 package com.margallo.database.util;
 
-import com.margallo.database.models.Employee;
+import com.margallo.models.Employee;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +16,7 @@ public class RsToObject {
         employee.setEmployeeId(resultSet.getLong("employee_id"));
         employee.setFirstName(resultSet.getString("first_name"));
         employee.setLastName(resultSet.getString("last_name"));
+        employee.setPosition(resultSet.getString("position"));
         return employee;
     }
 

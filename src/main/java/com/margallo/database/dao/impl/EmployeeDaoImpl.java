@@ -1,10 +1,9 @@
 package com.margallo.database.dao.impl;
 
 import com.healthmarketscience.sqlbuilder.*;
-import com.healthmarketscience.sqlbuilder.custom.CustomSyntax;
 import com.margallo.database.DatabaseConnection;
 import com.margallo.database.dao.EmployeeDao;
-import com.margallo.database.models.Employee;
+import com.margallo.models.Employee;
 import com.margallo.database.query_filters.EmployeeFilter;
 import com.margallo.database.tables.EmployeeTable;
 import com.margallo.database.util.RsToObject;
@@ -13,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +26,12 @@ public class EmployeeDaoImpl implements EmployeeDao {
     private ResultSet resultSet;
 
     @Override
-    public List<Employee> all() throws SQLException {
-        return show(null);
+    public List<Employee> all() throws Exception {
+        return all(null);
     }
 
     @Override
-    public void insert(Employee model) throws SQLException {
+    public void insert(Employee model) throws Exception {
         initialize();
         String query = (new InsertQuery(EmployeeTable.getTable()))
                 .addColumn(EmployeeTable.getEmployeeId(), model.getEmployeeId())
@@ -49,7 +47,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     @Override
-    public Employee show(long id) throws SQLException {
+    public Employee show(long id) throws Exception {
         initialize();
         Employee employee = null;
         String query = (new SelectQuery())
@@ -68,11 +66,12 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     @Override
-    public void update(Employee model) throws SQLException {
+    public void update(Employee model) throws Exception {
         initialize();
         String query = (new UpdateQuery(EmployeeTable.getTable()))
                 .addSetClause(EmployeeTable.getEmployeeId(), model.getEmployeeId())
                 .addSetClause(EmployeeTable.getFirstName(), model.getFirstName())
+                .addSetClause(EmployeeTable.getLastName(), model.getLastName())
                 .addSetClause(EmployeeTable.getPosition(), model.getPosition())
                 .addCondition(BinaryCondition.equalTo(EmployeeTable.getId(), model.getId()))
                 .validate().toString();
@@ -84,7 +83,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     @Override
-    public void delete(long id) throws SQLException {
+    public void delete(long id) throws Exception {
         initialize();
         String query = (new DeleteQuery(EmployeeTable.getTable()))
                 .addCondition(BinaryCondition.equalTo(EmployeeTable.getId(), id))
@@ -97,11 +96,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     @Override
-    public boolean exists(long id) throws SQLException {
+    public boolean exists(long employeeId) throws Exception {
         initialize();
         String query = (new SelectQuery())
                 .addCustomColumns(FunctionCall.countAll())
-                .addCondition(BinaryCondition.equalTo(EmployeeTable.getId(), id))
+                .addCondition(BinaryCondition.equalTo(EmployeeTable.getEmployeeId(), employeeId))
                 .validate().toString();
         try {
             resultSet = statement.executeQuery(query);
@@ -115,7 +114,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     @Override
-    public List<Employee> show(EmployeeFilter filter) throws SQLException {
+    public List<Employee> all(EmployeeFilter filter) throws Exception {
         initialize();
         List<Employee> employees = new ArrayList<>();
         SelectQuery selectQuery = new SelectQuery().addAllTableColumns(EmployeeTable.getTable());
@@ -145,7 +144,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
         }
     }
 
-    private void initialize() throws SQLException {
+    private void initialize() throws Exception {
         connection = DatabaseConnection.getConnection();
         statement = connection.createStatement();
     }

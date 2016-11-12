@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.controlsfx.glyphfont.Glyph?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.margallo.controllers.NewEmployee" styleClass="window-border, info">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.margallo.controllers.NewEmployee">
     <top>
         <HBox alignment="CENTER_LEFT" styleClass="header">
             <padding>
@@ -19,7 +19,7 @@
                 <Insets top="10" left="15" bottom="10" right="10"/>
             </padding>
             <Label maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label">Employee ID</Label>
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="txtEmployeeId"/>
+            <TextField minWidth="400" GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="txtEmployeeId"/>
             <Label maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label">First Name</Label>
             <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" fx:id="txtFirstName"/>
             <Label maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="form-label">Last Name</Label>

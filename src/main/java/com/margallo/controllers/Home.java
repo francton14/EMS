@@ -1,30 +1,34 @@
 package com.margallo.controllers;
 
-import com.margallo.database.models.Employee;
-import com.margallo.services.EmployeeService;
-import com.margallo.services.impl.EmployeeServiceImpl;
+import com.margallo.database.dao.EmployeeDao;
+import com.margallo.database.dao.impl.EmployeeDaoImpl;
+import com.margallo.models.Employee;
+import com.margallo.util.DialogGenerator;
+import com.margallo.util.SceneSwitcher;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
 
 /**
  * Created by franc on 11/7/2016.
  */
 public class Home {
 
-    private EmployeeService employeeService;
+    private EmployeeDao employeeDao;
+
+    private Properties properties;
+
+    private ObservableList<Employee> employeeList;
 
     @FXML
     private Button btnNew;
@@ -41,31 +45,24 @@ public class Home {
     @FXML
     private TableView<Employee> employeeTable;
 
-    private ObservableList<Employee> employeeList;
-
     public Home() {
-        employeeService = new EmployeeServiceImpl();
-    }
-
-    public void show(Window window) throws IOException {
-        Parent parent = FXMLLoader.load(getClass().getResource("../fxml/home.fxml"));
-        parent.getStylesheets().add(getClass().getResource("../css/styles.css").toExternalForm());
-        Scene scene = new Scene(parent, 800, 600);
-        Stage stage = new Stage();
-        stage.initOwner(window);
-        stage.setScene(scene);
-        stage.show();
+        employeeDao = new EmployeeDaoImpl();
+        properties = new Properties();
+        try {
+            properties.load(getClass().getResourceAsStream("/messages.properties"));
+        } catch (Exception e) {
+            DialogGenerator.showExceptionDialog("An internal problem occurred", e.getMessage(), e).showAndWait();
+        }
+        updateEmployeeList();
     }
 
     @FXML
     private void onBtnNewClick() {
-        NewEmployee newEmployee = new NewEmployee();
         try {
-            newEmployee.show(btnNew.getScene().getWindow());
-        } catch (IOException e) {
-            e.printStackTrace();
+            SceneSwitcher.switchScene(btnNew.getScene(), getClass().getResource("../fxml/new_employee.fxml"));
+        } catch (Exception e) {
+            DialogGenerator.showExceptionDialog(properties.getProperty("internal.error.header"), e.getMessage(), e).showAndWait();
         }
-        updateEmployeeList();
     }
 
     @FXML
@@ -75,19 +72,36 @@ public class Home {
 
     @FXML
     private void onBtnViewClick() {
-
+        try {
+            Employee selectedEmployee = employeeTable.getSelectionModel().getSelectedItem();
+            FXMLLoader loader = SceneSwitcher.switchSceneWithReturn(btnView.getScene(), getClass().getResource("../fxml/view_employee.fxml"));
+            ViewEmployee controller = loader.getController();
+            controller.setEmployee(selectedEmployee);
+        } catch (Exception e) {
+            DialogGenerator.showExceptionDialog(properties.getProperty("internal.error.header"), e.getMessage(), e).showAndWait();
+        }
     }
 
     @FXML
     private void onBtnDeleteClick() {
-
+        Optional<ButtonType> result = DialogGenerator.showConfirmationDialog(properties.getProperty("employee.delete.confirmation.header"),
+                properties.getProperty("employee.delete.confirmation.message"))
+                .showAndWait();
+        if (result.get() == ButtonType.OK) {
+            try {
+                long id = employeeTable.getSelectionModel().getSelectedItem().getId();
+                employeeDao.delete(id);
+                employeeList.removeIf(employee -> employee.getId() == id);
+            } catch (Exception e) {
+                DialogGenerator.showExceptionDialog(properties.getProperty("internal.error.header"), e.getMessage(), e).showAndWait();
+            }
+        }
     }
 
     @FXML
     private void initialize() {
         btnDelete.visibleProperty().bind(viewAndDeleteBtnBindings());
         btnView.visibleProperty().bind(viewAndDeleteBtnBindings());
-        updateEmployeeList();
         employeeTable.setItems(employeeList);
     }
 
@@ -96,7 +110,12 @@ public class Home {
     }
 
     private void updateEmployeeList() {
-        List<Employee> employees = employeeService.all();
+        try {
+            List<Employee> employees = employeeDao.all();
+            employeeList = FXCollections.observableList(employees);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

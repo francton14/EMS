@@ -1,34 +1,45 @@
 package com.margallo;
 
-import com.healthmarketscience.sqlbuilder.CreateTableQuery;
-import com.healthmarketscience.sqlbuilder.custom.mysql.MysObjects;
-import com.healthmarketscience.sqlbuilder.dbspec.Constraint;
-import com.healthmarketscience.sqlbuilder.dbspec.basic.DbConstraint;
-import com.margallo.controllers.Home;
 import com.margallo.database.TableDefinition;
-import com.margallo.database.tables.EmployeeTable;
+import com.margallo.util.DialogGenerator;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * Created by franc on 11/10/2016.
  */
 public class Main extends Application {
 
-    private Home home;
+    private Properties properties;
 
     public Main() {
-        home = new Home();
+        properties = new Properties();
+        try {
+            properties.load(getClass().getResourceAsStream("/messages.properties"));
+            new TableDefinition().createTables();
+        } catch (Exception e) {
+            DialogGenerator.showExceptionDialog("An internal problem occurred", e.getMessage(), e).showAndWait();
+        }
     }
 
-    public void start(Stage primaryStage) throws Exception {
-        home.show(primaryStage);
+    public void start(Stage primaryStage) {
+        try {
+            Parent parent = FXMLLoader.load(getClass().getResource("fxml/home.fxml"));
+            parent.getStylesheets().add(getClass().getResource("css/styles.css").toExternalForm());
+            Scene scene = new Scene(parent, 800, 600);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (Exception e) {
+            DialogGenerator.showExceptionDialog(properties.getProperty("internal.error.header"), e.getMessage(), e).showAndWait();
+        }
     }
 
     public static void main(String[] args) {
-        
         launch(args);
     }
 

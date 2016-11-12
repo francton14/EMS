@@ -1,9 +1,8 @@
 package com.margallo.database.dao;
 
-import com.margallo.database.models.Employee;
+import com.margallo.models.Employee;
 import com.margallo.database.query_filters.EmployeeFilter;
 
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -11,6 +10,8 @@ import java.util.List;
  */
 public interface EmployeeDao extends GenericDao<Employee> {
 
-    public List<Employee> show(EmployeeFilter filter) throws SQLException;
+    public List<Employee> all(EmployeeFilter filter) throws Exception;
+
+    public boolean exists(long employeeId) throws Exception;
 
 }

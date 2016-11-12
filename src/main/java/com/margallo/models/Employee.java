@@ -1,4 +1,4 @@
-package com.margallo.database.models;
+package com.margallo.models;
 
 import java.io.Serializable;
 
@@ -51,6 +51,17 @@ public class Employee implements Serializable {
 
     public void setPosition(String position) {
         this.position = position;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", employeeId=" + employeeId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", position='" + position + '\'' +
+                '}';
     }
 
 }

@@ -1,21 +1,18 @@
 package com.margallo.controllers;
 
-import com.margallo.database.models.Employee;
-import com.margallo.services.EmployeeService;
-import com.margallo.services.impl.EmployeeServiceImpl;
+import com.margallo.database.dao.EmployeeDao;
+import com.margallo.database.dao.impl.EmployeeDaoImpl;
+import com.margallo.models.Employee;
+import com.margallo.util.DialogGenerator;
+import com.margallo.util.SceneSwitcher;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.Window;
 
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Created by franc on 11/7/2016.
@@ -23,7 +20,9 @@ import java.io.IOException;
 
 public class NewEmployee {
 
-    private EmployeeService employeeService;
+    private EmployeeDao employeeDao;
+
+    private Properties properties;
 
     @FXML
     private TextField txtEmployeeId;
@@ -44,18 +43,13 @@ public class NewEmployee {
     private Button btnCancel;
 
     public NewEmployee() {
-        employeeService = new EmployeeServiceImpl();
-    }
-
-    public void show(Window window) throws IOException {
-        Parent parent = FXMLLoader.load(getClass().getResource("../fxml/new_employee.fxml"));
-        parent.getStylesheets().add(getClass().getResource("../css/styles.css").toExternalForm());
-        Scene scene = new Scene(parent, 400, 400);
-        Stage stage = new Stage(StageStyle.UNDECORATED);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.initOwner(window);
-        stage.setScene(scene);
-        stage.showAndWait();
+        employeeDao = new EmployeeDaoImpl();
+        properties = new Properties();
+        try {
+            properties.load(getClass().getResourceAsStream("/messages.properties"));
+        } catch (IOException e) {
+            DialogGenerator.showExceptionDialog("An internal problem occurred", e.getMessage(), e).showAndWait();
+        }
     }
 
     @FXML
@@ -65,14 +59,31 @@ public class NewEmployee {
         employee.setFirstName(txtFirstName.getText());
         employee.setLastName(txtLastName.getText());
         employee.setPosition(txtPosition.getText());
-        employeeService.insert(employee);
+        try {
+            if (!employeeDao.exists(employee.getEmployeeId())) {
+                employeeDao.insert(employee);
+                DialogGenerator.showDialog(properties.getProperty("employee.insert.success.header"),
+                        properties.getProperty("employee.insert.success.message"),
+                        Alert.AlertType.INFORMATION).showAndWait();
+                SceneSwitcher.switchScene(btnSubmit.getScene(), getClass().getResource("../fxml/home.fxml"));
+            } else {
+                DialogGenerator.showDialog(properties.getProperty("employee.insert.exist.header"),
+                        properties.getProperty("employee.insert.exist.message"),
+                        Alert.AlertType.ERROR).showAndWait();
+            }
+        } catch (Exception e) {
+            DialogGenerator.showExceptionDialog(properties.getProperty("internal.error.header"), e.getMessage(), e).showAndWait();
+        }
     }
 
     @FXML
     private void onBtnCancelClick() {
-        Stage stage = (Stage) btnCancel.getScene().getWindow();
-        btnSubmit.disableProperty().unbind();
-        stage.close();
+        try {
+            btnSubmit.disableProperty().unbind();
+            SceneSwitcher.switchScene(btnSubmit.getScene(), getClass().getResource("../fxml/home.fxml"));
+        } catch (Exception e) {
+            DialogGenerator.showExceptionDialog(properties.getProperty("internal.error.header"), e.getMessage(), e).showAndWait();
+        }
     }
 
     @FXML

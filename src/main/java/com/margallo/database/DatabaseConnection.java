@@ -10,28 +10,13 @@ import java.util.Properties;
  */
 public class DatabaseConnection {
 
-    private static Connection connection;
-
-    private static Statement statement;
-
-    static {
-        try {
-            Class.forName("org.postgresql.Driver");
-            Properties properties = new Properties();
-            properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties"));
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/ems", properties.getProperty("database.username"), properties.getProperty("database.password"));
-            statement = connection.createStatement();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static Connection getConnection() {
-        return connection;
-    }
-
-    public static Statement getStatement() {
-        return statement;
+    public static Connection getConnection() throws Exception {
+        Class.forName("org.postgresql.Driver");
+        Properties properties = new Properties();
+        properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties"));
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/ems",
+                properties.getProperty("database.username"),
+                properties.getProperty("database.password"));
     }
 
 }

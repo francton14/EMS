@@ -2,6 +2,7 @@ package com.margallo.database.tables;
 
 import com.healthmarketscience.sqlbuilder.ConstraintClause;
 import com.healthmarketscience.sqlbuilder.CreateTableQuery;
+import com.healthmarketscience.sqlbuilder.custom.mysql.MysObjects;
 import com.healthmarketscience.sqlbuilder.dbspec.Constraint;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.*;
 
@@ -20,9 +21,11 @@ public class EmployeeTable {
     static {
         DbSpec dbSpec = new DbSpec();
         DbSchema dbSchema = dbSpec.addDefaultSchema();
-        table = dbSchema.addTable("employee");
-        id = table.addColumn("id", "bigint", null);
+        table = dbSchema.addTable("employees");
+        id = table.addColumn("id", "bigserial", null);
+        id.primaryKey("employee_pk");
         employeeId = table.addColumn("employee_id", "bigint", null);
+        employeeId.unique("employee_unique_eid");
         firstName = table.addColumn("first_name", "varchar", 255);
         lastName = table.addColumn("last_name", "varchar", 255);
         position = table.addColumn("position", "varchar", 255);
