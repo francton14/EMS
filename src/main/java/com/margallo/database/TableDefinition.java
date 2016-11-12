@@ -10,6 +10,9 @@ import com.healthmarketscience.sqlbuilder.dbspec.Constraint;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbTable;
 import org.apache.commons.dbutils.DbUtils;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -23,15 +26,15 @@ import java.sql.Statement;
 public class TableDefinition {
 
     public void createTables() throws IOException {
-        ClassPath.from(this.getClass().getClassLoader()).getTopLevelClasses("com.margallo.database.tables").forEach(classInfo -> {
+        Reflections reflections = new Reflections("com.margallo.database.tables", new SubTypesScanner(false));
+        reflections.getSubTypesOf(Object.class).forEach(classInfo -> {
             Connection connection = null;
             Statement statement = null;
             try {
                 connection = DatabaseConnection.getConnection();
                 statement = connection.createStatement();
-                DbTable table = (DbTable) classInfo.load().getMethod("getTable").invoke(classInfo);
+                DbTable table = (DbTable) classInfo.getMethod("getTable").invoke(classInfo);
                 statement.execute(generateQuery(table));
-
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {

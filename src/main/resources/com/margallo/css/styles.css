@@ -67,6 +67,7 @@
 
 .label.form-label.top {
     -fx-padding: 10px 5px 0 5px;
+    -fx-alignment: center-left;
 }
 
 .button {

@@ -67,7 +67,11 @@ public class Home {
 
     @FXML
     private void onBtnSearchClick() {
-
+        try {
+            SceneSwitcher.switchScene(btnSearch.getScene(), getClass().getResource("../fxml/search.fxml"));
+        } catch (Exception e) {
+            DialogGenerator.showExceptionDialog(properties.getProperty("internal.error.header"), e.getMessage(), e).showAndWait();
+        }
     }
 
     @FXML

@@ -24,9 +24,9 @@
             <version>1.6</version>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>20.0</version>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
         </dependency>
         <dependency>
             <groupId>com.healthmarketscience.sqlbuilder</groupId>
