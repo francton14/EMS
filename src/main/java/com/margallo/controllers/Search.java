@@ -2,17 +2,20 @@ package com.margallo.controllers;
 
 import com.margallo.database.dao.EmployeeDao;
 import com.margallo.database.dao.impl.EmployeeDaoImpl;
+import com.margallo.database.query_filters.EmployeeFilter;
 import com.margallo.models.Employee;
 import com.margallo.util.DialogGenerator;
 import com.margallo.util.SceneSwitcher;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.glyphfont.Glyph;
 
 import java.io.IOException;
@@ -68,6 +71,7 @@ public class Search {
         employeeDao = new EmployeeDaoImpl();
         properties = new Properties();
         showAdvanced = new SimpleBooleanProperty(false);
+        employeeList = FXCollections.observableArrayList();
         try {
             properties.load(getClass().getResourceAsStream("/messages.properties"));
         } catch (IOException e) {
@@ -77,13 +81,26 @@ public class Search {
 
     @FXML
     private void onBtnSearchClick() {
-
+        try {
+            EmployeeFilter filter = new EmployeeFilter();
+            filter.setEmployeeId((StringUtils.isNotEmpty(txtEmployeeId.getText()))? Long.valueOf(txtEmployeeId.getText()) : null);
+            filter.setFirstName(txtFirstName.getText());
+            filter.setLastName(txtLastName.getText());
+            filter.setPosition(txtPosition.getText());
+            employeeList.removeAll(employeeList);
+            employeeList.addAll(employeeDao.all(filter));
+        } catch (Exception e) {
+            DialogGenerator.showExceptionDialog(properties.getProperty("internal.error.header"), e.getMessage(), e).showAndWait();
+        }
     }
 
     @FXML
     private void onBtnAdvancedClick() {
         showAdvanced.setValue(!showAdvanced.getValue());
         if (showAdvanced.getValue()) {
+            txtFirstName.setText(null);
+            txtLastName.setText(null);
+            txtPosition.setText(null);
             btnAdvanced.setGraphic(new Glyph("FontAwesome", "CHEVRON_UP"));
             btnAdvanced.setText("Hide Advanced");
         } else {
@@ -115,6 +132,7 @@ public class Search {
         txtPosition.managedProperty().bind(showAdvanced);
         lblPosition.visibleProperty().bind(showAdvanced);
         lblPosition.managedProperty().bind(showAdvanced);
+        employeeTable.setItems(employeeList);
     }
 
 }
